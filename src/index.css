@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-green-dark: #0F4C3A;
+  --color-brand-green: #156B52;
+  --color-brand-green-light: #2A8C6F;
+  --color-brand-green-soft: #E6F3EE;
+  --color-brand-cream-light: #FDFDFB;
+  --color-brand-cream: #FAF6EE;
+  --color-brand-cream-dark: #EFE8D9;
+  --color-brand-brown-dark: #4A3319;
+  --color-brand-brown: #73512F;
+  --color-brand-brown-light: #A68463;
+  --color-brand-accent-gold: #C29F5C;
+  --color-brand-charcoal: #22252A;
+  --color-brand-gray-light: #F5F7FA;
+  
+  --font-display: 'Outfit', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+
+  --animate-fade-in: fade-in 0.6s ease-out forwards;
+  --animate-slide-up: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom Base Styles */
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-cream-light);
+  color: var(--color-brand-charcoal);
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-brand-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-brown-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-brown);
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: rgba(253, 253, 251, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(239, 232, 217, 0.6);
+}
+
+.glass-panel-dark {
+  background: rgba(15, 76, 58, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(42, 140, 111, 0.3);
+}
+
+/* Premium Card Hover Effect */
+.hover-card-effect {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.hover-card-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(74, 51, 25, 0.15);
+}
