@@ -290,6 +290,7 @@ export const Subscriptions: React.FC = () => {
                   >
                     <option value="Morning">Morning</option>
                     <option value="Evening">Evening</option>
+                    <option value="Both">Both (Morning & Evening)</option>
                   </select>
                 </div>
               </div>

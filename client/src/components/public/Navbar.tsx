@@ -74,6 +74,26 @@ export const Navbar: React.FC = () => {
                     <ShieldAlert className="h-4 w-4" />
                   </button>
                 )}
+
+                {currentUser.role === 'partner' && (
+                  <button
+                    onClick={() => handleNav('partner-dashboard')}
+                    className="p-1 text-brand-green hover:bg-brand-green/10 rounded-full transition-colors tooltip"
+                    title="Partner Dashboard"
+                  >
+                    <ShieldAlert className="h-4 w-4" />
+                  </button>
+                )}
+
+                {currentUser.role === 'customer' && (
+                  <button
+                    onClick={() => handleNav('subscriber-dashboard')}
+                    className="p-1 text-brand-green hover:bg-brand-green/10 rounded-full transition-colors tooltip"
+                    title="Subscriber Dashboard"
+                  >
+                    <ShieldAlert className="h-4 w-4" />
+                  </button>
+                )}
                 
                 <button
                   onClick={() => { signOut(); handleNav('home'); }}
@@ -136,6 +156,24 @@ export const Navbar: React.FC = () => {
                     >
                       <ShieldAlert className="h-4 w-4 mr-2" />
                       Dashboard
+                    </button>
+                  )}
+                  {currentUser.role === 'partner' && (
+                    <button
+                      onClick={() => handleNav('partner-dashboard')}
+                      className="flex items-center w-full px-3 py-2 bg-brand-green-soft text-brand-green rounded-md text-sm font-medium"
+                    >
+                      <ShieldAlert className="h-4 w-4 mr-2" />
+                      Partner Dashboard
+                    </button>
+                  )}
+                  {currentUser.role === 'customer' && (
+                    <button
+                      onClick={() => handleNav('subscriber-dashboard')}
+                      className="flex items-center w-full px-3 py-2 bg-brand-green-soft text-brand-green rounded-md text-sm font-medium"
+                    >
+                      <ShieldAlert className="h-4 w-4 mr-2" />
+                      Subscriber Dashboard
                     </button>
                   )}
                   <button

@@ -9,26 +9,53 @@ export const Applications: React.FC = () => {
     approvePartnerApp,
     rejectPartnerApp,
     approveSubscriptionApp,
-    rejectSubscriptionApp
+    rejectSubscriptionApp,
+    subscriptionRequests,
+    approveSubscriptionRequest,
+    rejectSubscriptionRequest
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'partners' | 'subscriptions' | 'approved' | 'rejected'>('partners');
+  const [activeTab, setActiveTab] = useState<'partners' | 'subscriptions' | 'requests' | 'approved' | 'rejected'>('partners');
   const [selectedPartnerApp, setSelectedPartnerApp] = useState<PartnerApplication | null>(null);
   const [selectedSubApp, setSelectedSubApp] = useState<SubscriptionApplication | null>(null);
-  const [approvedDetails, setApprovedDetails] = useState<{ id: string; tempPass: string } | null>(null);
+  const [approvedDetails, setApprovedDetails] = useState<{
+    id: string;
+    tempPass: string;
+    mobile: string;
+    name: string;
+    type: 'Dairy Partner' | 'Subscription Customer';
+  } | null>(null);
 
   const handleApprovePartner = (id: string) => {
+    const app = partnerApplications.find(a => a.id === id);
+    const mobile = app ? app.mobile : '';
+    const name = app ? app.fullName : '';
     const details = approvePartnerApp(id);
     if (details) {
-      setApprovedDetails({ id: details.partnerId, tempPass: details.tempPass });
+      setApprovedDetails({
+        id: details.partnerId,
+        tempPass: details.tempPass,
+        mobile,
+        name,
+        type: 'Dairy Partner'
+      });
       setSelectedPartnerApp(null);
     }
   };
 
   const handleApproveSub = (id: string) => {
+    const app = subscriptionApplications.find(a => a.id === id);
+    const mobile = app ? app.mobile : '';
+    const name = app ? app.fullName : '';
     const details = approveSubscriptionApp(id);
     if (details) {
-      setApprovedDetails({ id: details.customerId, tempPass: details.tempPass });
+      setApprovedDetails({
+        id: details.customerId,
+        tempPass: details.tempPass,
+        mobile,
+        name,
+        type: 'Subscription Customer'
+      });
       setSelectedSubApp(null);
     }
   };
@@ -45,6 +72,7 @@ export const Applications: React.FC = () => {
 
   const pendingPartners = partnerApplications.filter(a => a.status === 'Pending');
   const pendingSubscriptions = subscriptionApplications.filter(a => a.status === 'Pending');
+  const pendingRequests = subscriptionRequests.filter(r => r.status === 'Pending');
   
   // Historical Approved/Rejected list combined
   const approvedApps = [
@@ -83,6 +111,16 @@ export const Applications: React.FC = () => {
           Daily Subscriptions ({pendingSubscriptions.length})
         </button>
         <button
+          onClick={() => setActiveTab('requests')}
+          className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === 'requests'
+              ? 'bg-brand-green text-brand-cream shadow-sm'
+              : 'text-brand-charcoal/60 hover:text-brand-charcoal hover:bg-brand-gray-light'
+          }`}
+        >
+          Subscription Changes ({pendingRequests.length})
+        </button>
+        <button
           onClick={() => setActiveTab('approved')}
           className={`px-5 py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
             activeTab === 'approved'
@@ -106,24 +144,46 @@ export const Applications: React.FC = () => {
 
       {/* Success Approval Modal */}
       {approvedDetails && (
-        <div className="bg-brand-green text-brand-cream-light p-6 rounded-2xl border border-brand-accent-gold shadow-md flex justify-between items-center animate-fade-in">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-brand-accent-gold">
-              <ShieldCheck className="h-6 w-6" />
+        <div className="bg-brand-green text-brand-cream-light p-6 rounded-2xl border border-brand-accent-gold shadow-md space-y-4 animate-fade-in">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-brand-accent-gold">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <div>
+                <span className="font-display font-extrabold text-base block text-brand-accent-gold">Application Approved & Account Created!</span>
+                <span className="text-xs text-brand-cream-light/80 block">
+                  Credentials simulated as sent to applicant's phone number.
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="font-display font-extrabold text-base block text-brand-accent-gold">Account Created Successfully!</span>
-              <span className="text-xs">
-                System generated ID: <strong className="font-mono text-white text-sm">{approvedDetails.id}</strong> | Default temporary password: <strong className="font-mono text-white text-sm">{approvedDetails.tempPass}</strong>
-              </span>
+            <button
+              onClick={() => setApprovedDetails(null)}
+              className="p-1.5 hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="bg-white/10 border border-white/20 p-4 rounded-xl text-xs space-y-2">
+            <div className="flex items-center gap-2 text-brand-accent-gold font-bold uppercase tracking-wider text-[10px]">
+              <span className="inline-block h-2 w-2 rounded-full bg-brand-accent-gold animate-pulse"></span>
+              SMS Notification Dispatched
+            </div>
+            <p>
+              Login credentials successfully sent to {approvedDetails.name}'s mobile number: <strong className="font-mono text-white text-sm select-all">{approvedDetails.mobile}</strong>
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-brand-charcoal/30 p-3 rounded-lg border border-white/5">
+              <div>
+                <span className="text-[10px] text-brand-cream-light/60 uppercase block">Login ID (Permanent ID)</span>
+                <strong className="font-mono text-white text-sm select-all">{approvedDetails.id}</strong>
+              </div>
+              <div>
+                <span className="text-[10px] text-brand-cream-light/60 uppercase block">Temporary Password</span>
+                <strong className="font-mono text-white text-sm select-all">{approvedDetails.tempPass}</strong>
+              </div>
             </div>
           </div>
-          <button
-            onClick={() => setApprovedDetails(null)}
-            className="p-1.5 hover:bg-white/10 rounded-full transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
         </div>
       )}
 
@@ -215,6 +275,61 @@ export const Applications: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleApproveSub(app.id)}
+                          className="bg-brand-green text-brand-cream hover:bg-brand-green-light px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase transition-colors cursor-pointer"
+                        >
+                          Approve
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 2.5 Subscription Adjustments Requests */}
+      {activeTab === 'requests' && (
+        <div className="bg-white rounded-2xl border border-brand-cream-dark shadow-sm overflow-hidden animate-fade-in">
+          {pendingRequests.length === 0 ? (
+            <div className="p-12 text-center text-brand-charcoal/40">
+              No pending subscription adjustment requests currently.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-brand-gray-light text-brand-charcoal/60 border-b border-brand-cream-dark font-semibold uppercase tracking-wider">
+                    <th className="p-4 pl-6">Req ID</th>
+                    <th className="p-4">Customer</th>
+                    <th className="p-4">Change Type</th>
+                    <th className="p-4">Details Requested</th>
+                    <th className="p-4">Submitted Date</th>
+                    <th className="p-4 text-right pr-6">Review Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-brand-cream-dark">
+                  {pendingRequests.map((req) => (
+                    <tr key={req.id} className="hover:bg-brand-cream/10 transition-colors">
+                      <td className="p-4 pl-6 font-mono font-bold text-brand-brown">{req.id.slice(-6)}</td>
+                      <td className="p-4 font-semibold text-brand-charcoal">{req.customerName} ({req.customerId})</td>
+                      <td className="p-4">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-green-soft text-brand-green border border-brand-green/10">
+                          {req.type}
+                        </span>
+                      </td>
+                      <td className="p-4 text-brand-charcoal/70 max-w-xs truncate">{req.details}</td>
+                      <td className="p-4 text-brand-charcoal/50">{req.submittedAt}</td>
+                      <td className="p-4 pr-6 text-right space-x-2">
+                        <button
+                          onClick={() => rejectSubscriptionRequest(req.id)}
+                          className="bg-red-50 text-red-800 border border-red-200 hover:bg-red-100 px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase transition-colors cursor-pointer"
+                        >
+                          Reject
+                        </button>
+                        <button
+                          onClick={() => approveSubscriptionRequest(req.id)}
                           className="bg-brand-green text-brand-cream hover:bg-brand-green-light px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase transition-colors cursor-pointer"
                         >
                           Approve

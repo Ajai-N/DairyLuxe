@@ -10,9 +10,10 @@ export const Subscribe: React.FC = () => {
     mobile: '',
     address: '',
     quantity: 1,
-    deliveryTime: 'Morning' as 'Morning' | 'Evening'
+    deliveryTime: 'Morning' as 'Morning' | 'Evening' | 'Both'
   });
   const [submitted, setSubmitted] = useState(false);
+  const [registeredMobile, setRegisteredMobile] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const val = e.target.name === 'quantity' ? parseFloat(e.target.value) : e.target.value;
@@ -21,6 +22,7 @@ export const Subscribe: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setRegisteredMobile(formData.mobile);
     submitSubscriptionApp(formData);
     setSubmitted(true);
     setFormData({
@@ -92,9 +94,17 @@ export const Subscribe: React.FC = () => {
                   <Sparkles className="h-8 w-8" />
                 </div>
                 <h2 className="text-2xl font-display font-extrabold text-brand-green-dark mb-3">Subscription Request Received!</h2>
-                <p className="text-sm text-brand-charcoal/70 max-w-md mx-auto mb-8">
+                <p className="text-sm text-brand-charcoal/70 max-w-md mx-auto mb-6">
                   Your request is set to <strong>Pending Review</strong>. Our logistics supervisor will verify your street address and assign a local milk run route details in 24 hours.
                 </p>
+                <div className="bg-brand-green-soft border border-brand-green/20 p-6 rounded-2xl max-w-md mx-auto mb-8 text-xs text-brand-charcoal space-y-2 text-center animate-fade-in">
+                  <span className="block font-bold text-brand-green-dark uppercase tracking-wider text-[10px] pb-1 border-b border-brand-green/10">
+                    Registration & SMS Notification Status
+                  </span>
+                  <p className="leading-relaxed pt-1">
+                    Your subscription request is registered. Once our route coordinator approves your location, the system will send your permanent Login ID and temporary password to your mobile number: <strong className="font-semibold text-brand-green-dark">{registeredMobile}</strong>.
+                  </p>
+                </div>
                 <button
                   onClick={() => setSubmitted(false)}
                   className="bg-brand-green text-brand-cream hover:bg-brand-green-light font-bold px-6 py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
@@ -151,6 +161,7 @@ export const Subscribe: React.FC = () => {
                     name="address"
                     required
                     value={formData.address}
+                    onChange={handleChange}
                     placeholder="Apartment name, door number, street, landmark, pincode"
                     className="w-full bg-brand-cream-light border border-brand-cream-dark focus:border-brand-green focus:ring-1 focus:ring-brand-green focus:outline-none rounded-xl px-4 py-3 text-sm text-brand-charcoal transition-all"
                   />
@@ -189,6 +200,7 @@ export const Subscribe: React.FC = () => {
                     >
                       <option value="Morning">Morning (5:30 AM - 7:00 AM)</option>
                       <option value="Evening">Evening (5:30 PM - 7:00 PM)</option>
+                      <option value="Both">Both (Morning & Evening Slots)</option>
                     </select>
                   </div>
                 </div>

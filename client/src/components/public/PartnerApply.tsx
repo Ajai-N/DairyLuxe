@@ -15,6 +15,7 @@ export const PartnerApply: React.FC = () => {
     whyJoin: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [registeredMobile, setRegisteredMobile] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,6 +23,7 @@ export const PartnerApply: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setRegisteredMobile(formData.mobile);
     submitPartnerApp(formData);
     setSubmitted(true);
     setFormData({
@@ -98,9 +100,17 @@ export const PartnerApply: React.FC = () => {
                   <Award className="h-8 w-8" />
                 </div>
                 <h2 className="text-2xl font-display font-extrabold text-brand-green-dark mb-3">Application Submitted!</h2>
-                <p className="text-sm text-brand-charcoal/70 max-w-md mx-auto mb-8">
+                <p className="text-sm text-brand-charcoal/70 max-w-md mx-auto mb-6">
                   Your application is now under <strong>Pending Review</strong> status. Our regional supervisor will visit your location to inspect cattle health in 2-3 working days.
                 </p>
+                <div className="bg-brand-green-soft border border-brand-green/20 p-6 rounded-2xl max-w-md mx-auto mb-8 text-xs text-brand-charcoal space-y-2 text-center animate-fade-in">
+                  <span className="block font-bold text-brand-green-dark uppercase tracking-wider text-[10px] pb-1 border-b border-brand-green/10">
+                    Registration & SMS Notification Status
+                  </span>
+                  <p className="leading-relaxed pt-1">
+                    Your request is registered successfully. Once approved by the administration team, your login ID and temporary password will be sent automatically via SMS to your registered phone number: <strong className="font-semibold text-brand-green-dark">{registeredMobile}</strong>.
+                  </p>
+                </div>
                 <button
                   onClick={() => setSubmitted(false)}
                   className="bg-brand-green text-brand-cream hover:bg-brand-green-light font-bold px-6 py-2.5 rounded-xl text-xs transition-colors cursor-pointer"

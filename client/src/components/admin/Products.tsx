@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp, type Product } from '../../context/AppContext';
-import { Plus, Edit, Trash2, X, Image } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Image, Eye, EyeOff } from 'lucide-react';
 
 export const Products: React.FC = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useApp();
@@ -17,6 +17,7 @@ export const Products: React.FC = () => {
     unit: 'Litre',
     image: '',
     available: true,
+    hidden: false,
     benefitsString: ''
   });
 
@@ -29,6 +30,7 @@ export const Products: React.FC = () => {
       unit: 'Litre',
       image: '',
       available: true,
+      hidden: false,
       benefitsString: ''
     });
     setIsOpen(true);
@@ -43,6 +45,7 @@ export const Products: React.FC = () => {
       unit: product.unit,
       image: product.image,
       available: product.available,
+      hidden: product.hidden || false,
       benefitsString: product.benefits.join('\n')
     });
     setIsOpen(true);
@@ -52,7 +55,7 @@ export const Products: React.FC = () => {
     const { name, value } = e.target;
     let finalVal: any = value;
     if (name === 'price') finalVal = parseFloat(value) || 0;
-    if (name === 'available') {
+    if (name === 'available' || name === 'hidden') {
       const checkbox = e.target as HTMLInputElement;
       finalVal = checkbox.checked;
     }
@@ -80,6 +83,7 @@ export const Products: React.FC = () => {
       unit: formData.unit,
       image: formData.image || 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=600',
       available: formData.available,
+      hidden: formData.hidden,
       benefits: benefits.length > 0 ? benefits : ['Fresh & Natural', 'Locally Sourced']
     };
 
@@ -136,6 +140,13 @@ export const Products: React.FC = () => {
                 >
                   {p.available ? 'In Stock' : 'Out of Stock'}
                 </button>
+                
+                {/* Hidden Status Overlay badge */}
+                {p.hidden && (
+                  <span className="absolute top-11 right-3 bg-amber-600 text-brand-cream px-2 py-0.5 rounded text-[10px] font-extrabold uppercase shadow">
+                    Hidden
+                  </span>
+                )}
               </div>
 
               <div className="p-6 space-y-3">
@@ -157,6 +168,23 @@ export const Products: React.FC = () => {
 
             {/* Bottom Actions */}
             <div className="p-6 pt-0 border-t border-brand-cream-dark/50 flex gap-2 justify-end mt-4">
+              <button
+                onClick={() => {
+                  updateProduct({
+                    ...p,
+                    hidden: !p.hidden
+                  });
+                }}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase transition-colors cursor-pointer ${
+                  p.hidden
+                    ? 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100'
+                    : 'bg-brand-cream text-brand-green-dark hover:bg-brand-cream-dark border border-brand-cream-dark'
+                }`}
+                title={p.hidden ? 'Unhide product from catalog' : 'Hide product from catalog'}
+              >
+                {p.hidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                {p.hidden ? 'Unhide' : 'Hide'}
+              </button>
               <button
                 onClick={() => openEditModal(p)}
                 className="flex items-center gap-1 bg-brand-cream text-brand-brown hover:bg-brand-cream-dark px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase transition-colors cursor-pointer"
@@ -287,18 +315,34 @@ export const Products: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="available"
-                  name="available"
-                  checked={formData.available}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-brand-green border-brand-cream-dark rounded focus:ring-brand-green bg-brand-cream-light cursor-pointer"
-                />
-                <label htmlFor="available" className="ml-2.5 text-xs text-brand-charcoal/70 select-none cursor-pointer">
-                  Available for immediate sale / subscription
-                </label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="available"
+                    name="available"
+                    checked={formData.available}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-brand-green border-brand-cream-dark rounded focus:ring-brand-green bg-brand-cream-light cursor-pointer"
+                  />
+                  <label htmlFor="available" className="ml-2.5 text-xs text-brand-charcoal/70 select-none cursor-pointer">
+                    Available for Sale
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="hidden"
+                    name="hidden"
+                    checked={formData.hidden}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-brand-green border-brand-cream-dark rounded focus:ring-brand-green bg-brand-cream-light cursor-pointer"
+                  />
+                  <label htmlFor="hidden" className="ml-2.5 text-xs text-brand-charcoal/70 select-none cursor-pointer">
+                    Hide from Catalog
+                  </label>
+                </div>
               </div>
             </div>
 

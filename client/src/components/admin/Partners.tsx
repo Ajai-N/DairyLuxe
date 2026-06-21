@@ -20,7 +20,7 @@ export const Partners: React.FC = () => {
     setIsEditing(true);
   };
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     if (editFormData) {
       setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
     }
@@ -175,7 +175,7 @@ export const Partners: React.FC = () => {
               </div>
 
               <div className="border-t border-brand-cream-dark pt-4">
-                <span className="block text-[9px] uppercase font-bold text-brand-brown-light tracking-wide mb-1">Cattle Inventory & Experience</span>
+                <span className="block text-[9px] uppercase font-bold text-brand-brown-light tracking-wide mb-1">Assigned Program & Sourcing Experience</span>
                 <p className="text-brand-charcoal/70 italic bg-brand-cream-light p-3 rounded-xl border border-brand-cream-dark/60 leading-relaxed">
                   "{selectedPartner.experience}"
                 </p>
@@ -187,6 +187,32 @@ export const Partners: React.FC = () => {
                   "{selectedPartner.whyJoin}"
                 </p>
               </div>
+
+              {selectedPartner.cows && selectedPartner.cows.length > 0 && (
+                <div className="border-t border-brand-cream-dark pt-4">
+                  <span className="block text-[9px] uppercase font-bold text-brand-brown-light tracking-wide mb-2">
+                    Assigned Cattle Group ({selectedPartner.cows.filter(c => c.tagId.startsWith('BULL')).length} Bull, {selectedPartner.cows.filter(c => !c.tagId.startsWith('BULL')).length} Cows)
+                  </span>
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    {selectedPartner.cows.map(cow => (
+                      <div key={cow.tagId} className="bg-brand-cream-light p-2.5 rounded-xl border border-brand-cream-dark/60 flex justify-between items-center text-[10px]">
+                        <div>
+                          <span className="font-bold text-brand-green-dark block text-xs">{cow.tagId} ({cow.breed})</span>
+                          <span className="text-brand-charcoal/60">
+                            Age: {cow.ageYears} Yrs | {cow.tagId.startsWith('BULL') ? 'Sire (Breeding)' : `Lactation: ${cow.lactationStage}`}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-bold text-brand-green block">
+                            {cow.dailyYieldLiters > 0 ? `${cow.dailyYieldLiters}L/Day` : 'Bull'}
+                          </span>
+                          <span className="text-brand-charcoal/50 text-[9px]">{cow.healthStatus}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end pt-2">
@@ -279,6 +305,21 @@ export const Partners: React.FC = () => {
                     className="w-full bg-brand-cream-light border border-brand-cream-dark focus:border-brand-green focus:ring-1 focus:ring-brand-green focus:outline-none rounded-xl px-3 py-2 text-xs text-brand-charcoal transition-all"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-brand-charcoal uppercase tracking-wider mb-2">Procurement Slot Sourcing</label>
+                <select
+                  name="collectionSlot"
+                  required
+                  value={editFormData.collectionSlot || 'Both'}
+                  onChange={handleEditChange}
+                  className="w-full bg-brand-cream-light border border-brand-cream-dark focus:border-brand-green focus:ring-1 focus:ring-brand-green focus:outline-none rounded-xl px-3 py-2 text-xs text-brand-charcoal transition-all"
+                >
+                  <option value="Morning">Morning Collection</option>
+                  <option value="Evening">Evening Collection</option>
+                  <option value="Both">Both Morning & Evening Collections</option>
+                </select>
               </div>
 
               <div>

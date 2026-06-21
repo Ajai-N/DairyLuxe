@@ -27,8 +27,11 @@ export const SignIn: React.FC = () => {
     if (res.success) {
       if (res.role === 'admin') {
         navigateTo('admin-dashboard');
+      } else if (res.role === 'partner') {
+        navigateTo('partner-dashboard');
+      } else if (res.role === 'customer') {
+        navigateTo('subscriber-dashboard');
       } else {
-        // Direct non-admins back to homepage (or could show profile, let's show homepage with logged in state in Navbar)
         navigateTo('home');
       }
     } else {
@@ -146,12 +149,6 @@ export const SignIn: React.FC = () => {
           <ul className="space-y-1.5 text-[11px] text-brand-charcoal/80">
             <li>
               <strong>Admin:</strong> user <code className="bg-brand-cream px-1 font-mono text-[10px]">admin</code> / pass <code className="bg-brand-cream px-1 font-mono text-[10px]">admin123</code>
-            </li>
-            <li>
-              <strong>Dairy Partner:</strong> user <code className="bg-brand-cream px-1 font-mono text-[10px]">PRT1001</code> / pass <code className="bg-brand-cream px-1 font-mono text-[10px]">partner123</code>
-            </li>
-            <li>
-              <strong>Subscriber:</strong> user <code className="bg-brand-cream px-1 font-mono text-[10px]">SUB1001</code> / pass <code className="bg-brand-cream px-1 font-mono text-[10px]">customer123</code>
             </li>
           </ul>
         </div>

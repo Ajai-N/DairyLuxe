@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useNavigation } from '../../context/NavigationContext';
-import { Users, FileText, Inbox, ShoppingBag, ArrowUpRight, TrendingUp, DollarSign } from 'lucide-react';
+import { Users, FileText, Inbox, ShoppingBag, ArrowUpRight, TrendingUp, DollarSign, Megaphone, Trash2, Send } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { getDashboardStats, orders } = useApp();
+  const { getDashboardStats, orders, announcements, addAnnouncement, deleteAnnouncement } = useApp();
   const { navigateTo } = useNavigation();
   const stats = getDashboardStats();
+
+  // Announcement Form State
+  const [annTitle, setAnnTitle] = useState('');
+  const [annContent, setAnnContent] = useState('');
+  const [annCategory, setAnnCategory] = useState<'Training' | 'Veterinary Camp' | 'Company Update' | 'Opportunity' | 'General'>('General');
+
+  const handlePublishAnn = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!annTitle.trim() || !annContent.trim()) return;
+    addAnnouncement(annTitle, annContent, annCategory);
+    setAnnTitle('');
+    setAnnContent('');
+    setAnnCategory('General');
+    alert('Notice published to all partner boards!');
+  };
 
   // Recents List
   const recentOrders = orders.slice(0, 5);
@@ -224,6 +239,103 @@ export const Dashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Announcements Manager Scribe */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Side: Publish Announcement Form */}
+        <form onSubmit={handlePublishAnn} className="bg-white p-6 rounded-2xl border border-brand-cream-dark shadow-sm space-y-4">
+          <div className="flex items-center gap-2 border-b border-brand-cream-dark pb-3">
+            <Megaphone className="h-5 w-5 text-brand-green" />
+            <h3 className="font-display font-bold text-base text-brand-green-dark">Publish Partner Notice</h3>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-bold text-brand-charcoal uppercase tracking-wider mb-2">Notice Title</label>
+            <input
+              type="text"
+              required
+              value={annTitle}
+              onChange={(e) => setAnnTitle(e.target.value)}
+              placeholder="e.g. Foot & Mouth Disease Camp"
+              className="w-full bg-brand-gray-light border border-brand-cream-dark focus:border-brand-green focus:ring-1 focus:ring-brand-green focus:outline-none rounded-xl px-3 py-2 text-xs text-brand-charcoal transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="block text-[10px] font-bold text-brand-charcoal uppercase tracking-wider mb-2">Announcement Category</label>
+              <select
+                value={annCategory}
+                onChange={(e) => setAnnCategory(e.target.value as any)}
+                className="w-full bg-brand-gray-light border border-brand-cream-dark focus:border-brand-green focus:ring-1 focus:ring-brand-green focus:outline-none rounded-xl px-3 py-2 text-xs text-brand-charcoal transition-all"
+              >
+                <option value="General">General Announcement</option>
+                <option value="Training">Training Program</option>
+                <option value="Veterinary Camp">Veterinary Camp</option>
+                <option value="Company Update">Company Update</option>
+                <option value="Opportunity">New Opportunity</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-bold text-brand-charcoal uppercase tracking-wider mb-2">Detailed Content</label>
+            <textarea
+              required
+              rows={3}
+              value={annContent}
+              onChange={(e) => setAnnContent(e.target.value)}
+              placeholder="Write the details for Dairy Partners..."
+              className="w-full bg-brand-gray-light border border-brand-cream-dark focus:border-brand-green focus:ring-1 focus:ring-brand-green focus:outline-none rounded-xl px-3 py-2 text-xs text-brand-charcoal transition-all"
+            />
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              className="w-full bg-brand-green text-brand-cream hover:bg-brand-green-light font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-colors shadow-sm"
+            >
+              <Send className="h-4 w-4" /> Publish Announcement
+            </button>
+          </div>
+        </form>
+
+        {/* Right Side: Active Announcements List */}
+        <div className="bg-white p-6 rounded-2xl border border-brand-cream-dark shadow-sm lg:col-span-2 space-y-4">
+          <h3 className="font-display font-bold text-base text-brand-green-dark border-b border-brand-cream-dark pb-3">Active Sourced Notices</h3>
+          
+          {announcements.length === 0 ? (
+            <div className="p-8 text-center text-xs text-brand-charcoal/40">
+              No active announcements published.
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+              {announcements.map((ann) => (
+                <div key={ann.id} className="bg-brand-gray-light p-4 rounded-xl border border-brand-cream-dark/60 flex justify-between items-start gap-4">
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-extrabold uppercase bg-brand-green-soft text-brand-green px-2 py-0.5 rounded">
+                      {ann.category}
+                    </span>
+                    <h4 className="font-bold text-xs text-brand-green-dark pt-1">{ann.title}</h4>
+                    <p className="text-[11px] text-brand-charcoal/70 leading-relaxed truncate max-w-lg">{ann.content}</p>
+                    <span className="text-[9px] text-brand-charcoal/40 block pt-1">{ann.date}</span>
+                  </div>
+                  
+                  <button
+                    onClick={() => deleteAnnouncement(ann.id)}
+                    className="text-red-600 hover:bg-red-50 p-1 rounded transition-colors cursor-pointer"
+                    title="Delete Notice"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
 
     </div>
