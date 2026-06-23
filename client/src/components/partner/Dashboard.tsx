@@ -4,7 +4,7 @@ import { useNavigation } from '../../context/NavigationContext';
 import { 
   LayoutDashboard, FileText, LogOut, Home, Landmark, 
   CheckSquare, MessageSquare, PhoneCall, User, Award, Heart, 
-  HelpCircle, Sparkles, CheckCircle2, Activity, ShieldCheck, Mail
+  HelpCircle, Sparkles, CheckCircle2, Activity, ShieldCheck, Mail, Droplet
 } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
@@ -14,12 +14,13 @@ export const Dashboard: React.FC = () => {
     partners, 
     partnerApplications, 
     announcements, 
-    updatePartner 
+    updatePartner,
+    milkRecords
   } = useApp();
   const { navigateTo } = useNavigation();
 
   // Active tab state
-  const [activeTab, setActiveTab] = useState<'home' | 'details' | 'program' | 'benefits' | 'compensation' | 'guidelines' | 'announcements' | 'training' | 'support' | 'profile'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'details' | 'sourcingLogs' | 'program' | 'benefits' | 'compensation' | 'guidelines' | 'announcements' | 'training' | 'support' | 'profile'>('home');
 
   // Guidelines checkbox state (persisted locally)
   const [agreedGuidelines, setAgreedGuidelines] = useState(false);
@@ -155,6 +156,7 @@ export const Dashboard: React.FC = () => {
   const menuItems = [
     { name: 'Dashboard Home', icon: <LayoutDashboard className="h-5 w-5" />, key: 'home' as const },
     { name: 'Partner Profile', icon: <User className="h-5 w-5" />, key: 'details' as const },
+    { name: 'Milk Sourcing Logs', icon: <Droplet className="h-5 w-5" />, key: 'sourcingLogs' as const },
     { name: 'Assigned Program & Cattle', icon: <Activity className="h-5 w-5" />, key: 'program' as const },
     { name: 'Compensation & Payouts', icon: <FileText className="h-5 w-5" />, key: 'compensation' as const },
     { name: 'Partner Benefits', icon: <Award className="h-5 w-5" />, key: 'benefits' as const },
@@ -235,6 +237,7 @@ export const Dashboard: React.FC = () => {
           <h2 className="font-display font-extrabold text-xl text-brand-green-dark">
             {activeTab === 'home' && 'Partner Dashboard Home'}
             {activeTab === 'details' && 'Partner Sourcing Profile'}
+            {activeTab === 'sourcingLogs' && 'Raw Milk Sourcing Logs'}
             {activeTab === 'program' && 'Assigned Program & Cattle Details'}
             {activeTab === 'benefits' && 'DairyLuxe Partner Benefits'}
             {activeTab === 'compensation' && 'Compensation & Payout Slabs'}
@@ -358,6 +361,49 @@ export const Dashboard: React.FC = () => {
                 </div>
               </div>
 
+            </div>
+          )}
+
+          {/* TAB: MILK SOURCING LOGS */}
+          {activeTab === 'sourcingLogs' && (
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-cream-dark shadow-sm space-y-6 animate-slide-up">
+              <div>
+                <h3 className="text-lg font-display font-extrabold text-brand-green-dark border-b border-brand-cream-dark pb-3">Raw Milk Sourcing History</h3>
+                <p className="text-xs text-brand-charcoal/50 mt-1">This panel displays all computerized collections logged at the local node by our company workers.</p>
+              </div>
+
+              {milkRecords.filter(r => r.targetId === id && r.targetType === 'partner').length === 0 ? (
+                <div className="p-12 text-center text-xs text-brand-charcoal/40">
+                  No milk collection transactions have been recorded for your partner ID yet.
+                </div>
+              ) : (
+                <div className="overflow-x-auto text-xs">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-brand-gray-light text-brand-charcoal/60 border-b border-brand-cream-dark font-semibold">
+                        <th className="p-4 pl-6">Record ID</th>
+                        <th className="p-4">Milk Quantity</th>
+                        <th className="p-4">Collection Slot</th>
+                        <th className="p-4">Logged By (Worker Name)</th>
+                        <th className="p-4 pr-6">Collection Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-brand-cream-dark">
+                      {milkRecords
+                        .filter(r => r.targetId === id && r.targetType === 'partner')
+                        .map((log) => (
+                          <tr key={log.id} className="hover:bg-brand-cream/10 transition-colors">
+                            <td className="p-4 pl-6 font-mono text-brand-charcoal/60 font-semibold">{log.id}</td>
+                            <td className="p-4 font-bold text-brand-green-dark">{log.quantity} Litres</td>
+                            <td className="p-4 font-semibold text-brand-charcoal/70 uppercase text-[10px]">{log.slot}</td>
+                            <td className="p-4 text-brand-charcoal font-medium">{log.workerName} ({log.workerId})</td>
+                            <td className="p-4 pr-6 text-brand-charcoal/50">{log.date}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 

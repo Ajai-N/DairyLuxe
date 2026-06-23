@@ -31,6 +31,8 @@ export const SignIn: React.FC = () => {
         navigateTo('partner-dashboard');
       } else if (res.role === 'customer') {
         navigateTo('subscriber-dashboard');
+      } else if (res.role === 'worker') {
+        navigateTo('worker-dashboard');
       } else {
         navigateTo('home');
       }
@@ -149,6 +151,9 @@ export const SignIn: React.FC = () => {
           <ul className="space-y-1.5 text-[11px] text-brand-charcoal/80">
             <li>
               <strong>Admin:</strong> user <code className="bg-brand-cream px-1 font-mono text-[10px]">admin</code> / pass <code className="bg-brand-cream px-1 font-mono text-[10px]">admin123</code>
+            </li>
+            <li>
+              <strong>Worker:</strong> user <code className="bg-brand-cream px-1 font-mono text-[10px]">WRK1001</code> / pass <code className="bg-brand-cream px-1 font-mono text-[10px]">worker123</code>
             </li>
           </ul>
         </div>

@@ -133,8 +133,34 @@ CREATE TABLE IF NOT EXISTS announcements (
     date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 11. Workers Table
+CREATE TABLE IF NOT EXISTS workers (
+    id TEXT PRIMARY KEY, -- e.g., WRK1001
+    name TEXT NOT NULL,
+    mobile TEXT NOT NULL,
+    status TEXT DEFAULT 'Active', -- Active / Inactive
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 12. Milk Records Table
+CREATE TABLE IF NOT EXISTS milk_records (
+    id TEXT PRIMARY KEY, -- e.g., RECxxxx
+    worker_id TEXT NOT NULL,
+    worker_name TEXT NOT NULL,
+    target_id TEXT NOT NULL,
+    target_name TEXT NOT NULL,
+    target_type TEXT NOT NULL, -- partner / customer
+    quantity NUMERIC NOT NULL,
+    date TEXT NOT NULL, -- YYYY-MM-DD
+    slot TEXT NOT NULL, -- Morning / Evening
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create basic indexes for fast lookups
 CREATE INDEX IF NOT EXISTS idx_cows_partner ON cows(partner_id);
 CREATE INDEX IF NOT EXISTS idx_sub_req_customer ON subscription_requests(customer_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_bulk_orders_status ON bulk_orders(status);
+CREATE INDEX IF NOT EXISTS idx_milk_records_target ON milk_records(target_id);
+CREATE INDEX IF NOT EXISTS idx_milk_records_worker ON milk_records(worker_id);
+

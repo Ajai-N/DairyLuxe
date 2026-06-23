@@ -20,10 +20,12 @@ import { Partners as AdminPartners } from './components/admin/Partners';
 import { Subscriptions as AdminSubscriptions } from './components/admin/Subscriptions';
 import { Products as AdminProducts } from './components/admin/Products';
 import { Orders as AdminOrders } from './components/admin/Orders';
+import { Workers as AdminWorkers } from './components/admin/Workers';
 
 // Role Dashboards Imports
 import { Dashboard as PartnerDashboard } from './components/partner/Dashboard';
 import { Dashboard as SubscriberDashboard } from './components/subscriber/Dashboard';
+import { Dashboard as WorkerDashboard } from './components/worker/Dashboard';
 
 const AppContent: React.FC = () => {
   const { currentPage } = useNavigation();
@@ -32,6 +34,7 @@ const AppContent: React.FC = () => {
   const isAdminPage = currentPage.startsWith('admin-');
   const isPartnerPage = currentPage === 'partner-dashboard';
   const isSubscriberPage = currentPage === 'subscriber-dashboard';
+  const isWorkerPage = currentPage === 'worker-dashboard';
 
   // Route guarding for admin dashboard screens
   if (isAdminPage && currentUser?.role !== 'admin') {
@@ -73,6 +76,19 @@ const AppContent: React.FC = () => {
     );
   }
 
+  // Route guarding for worker dashboard screens
+  if (isWorkerPage && currentUser?.role !== 'worker') {
+    return (
+      <div className="flex flex-col min-h-screen bg-brand-cream-light">
+        <Navbar />
+        <div className="flex-grow">
+          <SignIn />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   // Render Admin Panels
   if (isAdminPage) {
     return (
@@ -83,6 +99,7 @@ const AppContent: React.FC = () => {
         {currentPage === 'admin-subscriptions' && <AdminSubscriptions />}
         {currentPage === 'admin-products' && <AdminProducts />}
         {currentPage === 'admin-orders' && <AdminOrders />}
+        {currentPage === 'admin-workers' && <AdminWorkers />}
       </AdminLayout>
     );
   }
@@ -95,6 +112,11 @@ const AppContent: React.FC = () => {
   // Render Subscriber Panel
   if (currentPage === 'subscriber-dashboard') {
     return <SubscriberDashboard />;
+  }
+
+  // Render Worker Panel
+  if (currentPage === 'worker-dashboard') {
+    return <WorkerDashboard />;
   }
 
   // Render Public Website Pages

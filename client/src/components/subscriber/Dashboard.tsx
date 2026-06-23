@@ -5,7 +5,7 @@ import {
   LayoutDashboard, FileText, Calendar, Edit3, Heart, 
   MessageSquare, ShoppingCart, PhoneCall, User, Landmark, 
   LogOut, Home, Sparkles, CheckCircle2, 
-  ShieldCheck, Mail, AlertCircle, Coffee, CloudSun
+  ShieldCheck, Mail, AlertCircle, Coffee, CloudSun, Droplet
 } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
@@ -18,12 +18,13 @@ export const Dashboard: React.FC = () => {
     submitSubscriptionRequest,
     products,
     createOrder,
-    updateCustomer
+    updateCustomer,
+    milkRecords
   } = useApp();
   const { navigateTo } = useNavigation();
 
   // Active tab state
-  const [activeTab, setActiveTab] = useState<'home' | 'details' | 'delivery' | 'manage' | 'promise' | 'notifications' | 'recommendations' | 'support' | 'profile'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'details' | 'delivery' | 'deliveryLogs' | 'manage' | 'promise' | 'notifications' | 'recommendations' | 'support' | 'profile'>('home');
 
   // Request Forms State
   const [requestQty, setRequestQty] = useState(1);
@@ -232,6 +233,7 @@ export const Dashboard: React.FC = () => {
     { name: 'Subscription Home', icon: <LayoutDashboard className="h-5 w-5" />, key: 'home' as const },
     { name: 'Subscription Details', icon: <FileText className="h-5 w-5" />, key: 'details' as const },
     { name: 'Delivery Information', icon: <Calendar className="h-5 w-5" />, key: 'delivery' as const },
+    { name: 'Milk Delivery Logs', icon: <Droplet className="h-5 w-5" />, key: 'deliveryLogs' as const },
     { name: 'Manage Subscription', icon: <Edit3 className="h-5 w-5" />, key: 'manage' as const },
     { name: 'Milk Quality Promise', icon: <Heart className="h-5 w-5" />, key: 'promise' as const },
     { name: 'Portal Notifications', icon: <MessageSquare className="h-5 w-5" />, key: 'notifications' as const },
@@ -329,6 +331,7 @@ export const Dashboard: React.FC = () => {
             {activeTab === 'home' && 'Customer Dashboard Home'}
             {activeTab === 'details' && 'My Subscription Details'}
             {activeTab === 'delivery' && 'Delivery Information & Schedules'}
+            {activeTab === 'deliveryLogs' && 'Raw Milk Delivery Logs'}
             {activeTab === 'manage' && 'Manage Daily Milk Subscription'}
             {activeTab === 'promise' && 'DairyLuxe Milk Quality Promise'}
             {activeTab === 'notifications' && 'Portal Updates & Notifications'}
@@ -423,6 +426,49 @@ export const Dashboard: React.FC = () => {
                 </div>
               </div>
 
+            </div>
+          )}
+
+          {/* TAB: MILK DELIVERY LOGS */}
+          {activeTab === 'deliveryLogs' && (
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-brand-cream-dark shadow-sm space-y-6 animate-slide-up">
+              <div>
+                <h3 className="text-lg font-display font-extrabold text-brand-green-dark border-b border-brand-cream-dark pb-3">Milk Delivery History</h3>
+                <p className="text-xs text-brand-charcoal/50 mt-1">This panel displays all computerized distributions logged at your doorstep by our company workers.</p>
+              </div>
+
+              {milkRecords.filter(r => r.targetId === id && r.targetType === 'customer').length === 0 ? (
+                <div className="p-12 text-center text-xs text-brand-charcoal/40">
+                  No delivery transactions have been recorded for your subscriber ID yet.
+                </div>
+              ) : (
+                <div className="overflow-x-auto text-xs">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-brand-gray-light text-brand-charcoal/60 border-b border-brand-cream-dark font-semibold">
+                        <th className="p-4 pl-6">Record ID</th>
+                        <th className="p-4">Milk Quantity</th>
+                        <th className="p-4">Delivery Slot</th>
+                        <th className="p-4">Handled By (Worker Name)</th>
+                        <th className="p-4 pr-6">Delivery Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-brand-cream-dark">
+                      {milkRecords
+                        .filter(r => r.targetId === id && r.targetType === 'customer')
+                        .map((log) => (
+                          <tr key={log.id} className="hover:bg-brand-cream/10 transition-colors">
+                            <td className="p-4 pl-6 font-mono text-brand-charcoal/60 font-semibold">{log.id}</td>
+                            <td className="p-4 font-bold text-brand-green-dark">{log.quantity} Litres</td>
+                            <td className="p-4 font-semibold text-brand-charcoal/70 uppercase text-[10px]">{log.slot}</td>
+                            <td className="p-4 text-brand-charcoal font-medium">{log.workerName} ({log.workerId})</td>
+                            <td className="p-4 pr-6 text-brand-charcoal/50">{log.date}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 

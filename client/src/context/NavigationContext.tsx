@@ -15,8 +15,10 @@ export type PageType =
   | 'admin-subscriptions'
   | 'admin-products'
   | 'admin-orders'
+  | 'admin-workers'
   | 'partner-dashboard'
-  | 'subscriber-dashboard';
+  | 'subscriber-dashboard'
+  | 'worker-dashboard';
 
 interface NavigationContextType {
   currentPage: PageType;
@@ -39,6 +41,8 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       window.history.pushState(null, '', '/partner/dashboard');
     } else if (page === 'subscriber-dashboard') {
       window.history.pushState(null, '', '/subscriber/dashboard');
+    } else if (page === 'worker-dashboard') {
+      window.history.pushState(null, '', '/worker/dashboard');
     } else {
       if (window.location.pathname !== '/') {
         window.history.pushState(null, '', '/');
@@ -59,6 +63,9 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       } else if (path === '/subscriber/dashboard') {
         setCurrentPage('subscriber-dashboard');
         return;
+      } else if (path === '/worker/dashboard') {
+        setCurrentPage('worker-dashboard');
+        return;
       }
 
       const hash = window.location.hash.replace('#', '') as PageType;
@@ -66,7 +73,8 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         'home', 'about', 'products', 'partner-apply', 'subscribe',
         'bulk-order', 'contact', 'signin', 'admin-dashboard',
         'admin-applications', 'admin-partners', 'admin-subscriptions',
-        'admin-products', 'admin-orders', 'partner-dashboard', 'subscriber-dashboard'
+        'admin-products', 'admin-orders', 'admin-workers',
+        'partner-dashboard', 'subscriber-dashboard', 'worker-dashboard'
       ];
       if (validPages.includes(hash)) {
         setCurrentPage(hash);
@@ -96,6 +104,10 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } else if (currentPage === 'subscriber-dashboard') {
       if (window.location.pathname !== '/subscriber/dashboard') {
         window.history.pushState(null, '', '/subscriber/dashboard');
+      }
+    } else if (currentPage === 'worker-dashboard') {
+      if (window.location.pathname !== '/worker/dashboard') {
+        window.history.pushState(null, '', '/worker/dashboard');
       }
     } else {
       window.location.hash = currentPage;

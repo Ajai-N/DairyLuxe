@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigation, type PageType } from '../../context/NavigationContext';
 import { useApp } from '../../context/AppContext';
-import { LayoutDashboard, Inbox, Users, ShoppingBag, FileText, Settings, LogOut, Home, Landmark } from 'lucide-react';
+import { LayoutDashboard, Inbox, Users, ShoppingBag, FileText, Settings, LogOut, Home, Landmark, Briefcase } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -16,6 +16,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: 'Applications', icon: <Inbox className="h-5 w-5" />, page: 'admin-applications' as PageType },
     { name: 'Partners', icon: <Users className="h-5 w-5" />, page: 'admin-partners' as PageType },
     { name: 'Subscriptions', icon: <FileText className="h-5 w-5" />, page: 'admin-subscriptions' as PageType },
+    { name: 'Workers', icon: <Briefcase className="h-5 w-5" />, page: 'admin-workers' as PageType },
     { name: 'Products Catalog', icon: <Settings className="h-5 w-5" />, page: 'admin-products' as PageType },
     { name: 'Order Logs', icon: <ShoppingBag className="h-5 w-5" />, page: 'admin-orders' as PageType },
   ];
@@ -98,6 +99,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             {currentPage === 'admin-subscriptions' && 'Daily Delivery Accounts'}
             {currentPage === 'admin-products' && 'Product Inventory Catalog'}
             {currentPage === 'admin-orders' && 'Order Transactions'}
+            {currentPage === 'admin-workers' && 'Worker Operations Directory'}
           </h2>
           <div className="text-xs text-brand-charcoal/50 font-semibold">
             System Local Time: {new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
